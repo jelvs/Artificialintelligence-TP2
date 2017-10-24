@@ -1,29 +1,95 @@
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.StringTokenizer;
+import SimulatedAnnealing.Cidades;
+import SimulatedAnnealing.SimulatedAnnealing;
 
 public class Main {
 
-	public static void main(String[] args) {
+	private static SimulatedAnnealing simulated = new SimulatedAnnealing();
+
+	public static void main(String[] args) throws NumberFormatException, IOException {
+
 		// TODO Auto-generated method stub
+
+		String nomeFicheiroD = "/Users/TiagoSousa/Documents/workspace/IA-TP2/src/Distancias.txt";
+		String nomeFicheiroC = "/Users/TiagoSousa/Documents/workspace/IA-TP2/src/cidades-xy.txt";
+
+		int[][] matrizDistancias = new int[21][21];
+
+
+		setMatrizDistancias(nomeFicheiroD, matrizDistancias);
+		setMatrizCidades(nomeFicheiroC);
+
+		setFirstSolution();
 		
-		//Trocar local do ficheiro
-		String nomeFicheiro = "/Users/TiagoSousa/Documents/workspace/IA-TP2/src/Distancias.txt";
+		
+
+		//simulated.printCidades();
+
+		String[] cidadesVisitadas = {"A", "S", "D"};
+		int[] cidadesValues = new int[cidadesVisitadas.length];
+
+
+		int current = 0;
+		for(Cidades cid1: Cidades.values()) {
+			for(String cid2: cidadesVisitadas ) {
+				if(cid2.equals(cid1.getName())) {
+					cidadesValues[current] = cid1.getValue();
+					current++;
+				}
+
+			}
+		}
+
+
+
+
+
+	}
+
+	private static void setFirstSolution() throws NumberFormatException, IOException {
+		BufferedReader first = new BufferedReader(new InputStreamReader(System.in));
+		List<Integer> firstList;
+		do {
+			
+			StringTokenizer t = new StringTokenizer(first.readLine());
+			int count = t.countTokens();
+			firstList = new ArrayList<Integer>(count);
+			while(count>0) {
+				firstList.add(Integer.parseInt(t.nextToken()));
+				count--;
+			}
+			
+		}while(first.ready());
+	
+		simulated.setFirstSolution(firstList);
+
+	}
+
+	private static void setMatrizDistancias(String nomeFicheiro, int[][] matrizDistancias) {
+
 		File ficheiroDistancias = new File(nomeFicheiro);
 		String linha = null;
 		int nlinhas = 0;
-		int[][] matrizDistancias = new int[21][21];
-	
+
+
+
 		if(ficheiroDistancias.exists()) {
 			try {
 				FileReader leFicheiro = new FileReader(nomeFicheiro);
+				@SuppressWarnings("resource")
 				BufferedReader bufferFicheiro = new BufferedReader(leFicheiro);
 				do {
 					linha = bufferFicheiro.readLine();
 					StringTokenizer st = new StringTokenizer(linha, " ");
 					int numTokens = st.countTokens();					
-					
+
 					for(int j = 0; j < numTokens  ; j++){
 						String token = st.nextToken();
 						matrizDistancias[j][j] = 0;
@@ -33,24 +99,59 @@ public class Main {
 						}
 					}
 					nlinhas++;
-				
+
 				}while(linha != null);
-				
+
 			}catch(Exception e) {
-				
-			}
-			
-			for (int i = 0; i < matrizDistancias.length; i++) {
-				for (int j = 0; j < matrizDistancias.length; j++) {
-					System.out.print(matrizDistancias[i][j] + "\t");
-				}
-				System.out.println();
+
 			}
 		}
-			
-		
-		
+
+		simulated.setMatrizDistancias(matrizDistancias);
+
+
 	}
-	
+
+
+
+
+
+	private static void setMatrizCidades(String nomeFicheiro) {
+
+		File ficheiroDistancias = new File(nomeFicheiro);
+
+
+
+		if(ficheiroDistancias.exists()) {
+			try {
+				FileReader leFicheiro = new FileReader(nomeFicheiro);
+				@SuppressWarnings("resource")
+				BufferedReader bufferFicheiro = new BufferedReader(leFicheiro);
+				bufferFicheiro.readLine();
+				int c = 0;
+				do {
+
+					StringTokenizer st = new StringTokenizer(bufferFicheiro.readLine());
+
+
+					st.nextToken();	
+					int x = Integer.parseInt(st.nextToken());
+					int y = Integer.parseInt(st.nextToken());
+
+					simulated.addCidades(c++, x, y);
+
+				}while(bufferFicheiro.ready());
+
+			}
+
+			catch(Exception e) {
+
+			}
+
+		}
+
+
+	}
+
 
 }
