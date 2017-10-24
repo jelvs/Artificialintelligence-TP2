@@ -42,6 +42,7 @@ public class SimulatedAnnealing {
 	//temperatur ainicial = raiz quadrada distancia ultimo para o  primeiro formaula distancia
 
 	public void setFirstSolution(List<Integer> first) {
+		Collections.shuffle(first);
 		int cost = 0;
 		for(int i = 0; i<first.size()-1; i++) {	
 
