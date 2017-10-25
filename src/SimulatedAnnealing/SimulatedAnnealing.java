@@ -81,6 +81,7 @@ public class SimulatedAnnealing {
 			}else {
 				if(Math.exp(-d/temperaturaN) > 0.9)
 					currentSolution = nextSolution;
+					pCounter++;
 					
 			}
 		}
@@ -91,6 +92,7 @@ public class SimulatedAnnealing {
 			n_iter = fatorial(bestSolution.getSolution().size())/2;
 			temperaturaN = decaimento(temperaturaN);
 			gCounter ++;
+			nCounter++;
 			return algSimulatedAnnealing();
 			
 	}
@@ -167,9 +169,7 @@ public class SimulatedAnnealing {
 		return vizinho;
 
 		
-		//positivo
-		//negativo
-		//counter geral
+		
 	}
 
 
