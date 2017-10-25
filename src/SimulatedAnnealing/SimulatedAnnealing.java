@@ -80,6 +80,7 @@ public class SimulatedAnnealing {
 			}else {
 				if(Math.exp(-d/temperaturaN) > 0.9)
 					currentSolution = nextSolution;
+					
 			}
 		}
 			
@@ -124,50 +125,51 @@ public class SimulatedAnnealing {
 
 		int p1 = randomG.nextInt(currentSolution.getSolution().size());
 		int p2 = randomG.nextInt(currentSolution.getSolution().size());
-		int first;
-		int second;
 
-		/*
-		 * mudar
-		 */
 		while (p1 == p2 || Math.abs(p1 - p2) <= 1) {
 			p2 = randomG.nextInt(currentSolution.getSolution().size());
 		}
-		if (p1 > p2) {
-			second = p1;
-			first = p2;
-		} else {
-			second = p2;
-			first = p1;
-		}
+	
 
 
 
 		List<Integer> newSolution = new ArrayList<Integer>();
 		int counter = 0;
+		int v1 = 0; 
+		int v2 = 0;
 		for (int s = 0; s < currentSolution.getSolution().size(); s++) {
-			if (s <= first || s > second) {
+			if(p1<p2) {
+				v2=p2;
+				v1=p1;
+			}else {
+				v1=p2;
+				v2=p1;
+			}
+			if (s <= v1 || s > v2) {
 				newSolution.add(s, currentSolution.getSolution().get(s));
 
 			} else {
-				newSolution.add(s, currentSolution.getSolution().get(second - counter));
+				newSolution.add(s, currentSolution.getSolution().get(v2 - counter));
 
 				counter++;
 			}
 		}
-		int newSecond = second + 1;
-		if (newSecond >= currentSolution.getSolution().size()) {
-			newSecond = 0;
+		int v2_2 = v2 + 1;
+		if (v2_2 >= currentSolution.getSolution().size()) {
+			v2_2 = 0;
 		}
 		List<Integer> aux = currentSolution.getSolution();
 
-		int dif = matrizDistancias[aux.get(first)][aux.get(second)] + matrizDistancias[aux.get(first + 1)][aux.get(newSecond)]
-				- matrizDistancias[aux.get(first)][aux.get(first + 1)] - matrizDistancias[aux.get(second)][aux.get(newSecond)];
+		int costD = matrizDistancias[aux.get(v1)][aux.get(v2)] + matrizDistancias[aux.get(v1 + 1)][aux.get(v2_2)]
+				- matrizDistancias[aux.get(v1)][aux.get(v1 + 1)] - matrizDistancias[aux.get(v2)][aux.get(v2_2)];
 
-		Solution vizinho = new Solution(newSolution, currentSolution.getCost() + dif, (positivo + negativo + 1), temperaturaN);
-		//nao vai ser a temperatura inicial, mas a nova temperatura que vamos ter de fazer
+		Solution vizinho = new Solution(newSolution, currentSolution.getCost() + costD, (positivo + negativo + 1), temperaturaN);
 		return vizinho;
 
+		
+		//positivo
+		//negativo
+		//counter geral
 	}
 
 
