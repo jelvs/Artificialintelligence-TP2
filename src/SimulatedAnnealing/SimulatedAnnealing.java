@@ -10,14 +10,15 @@ public class SimulatedAnnealing {
 	private int[][] matrizDistancias;
 	private List<CidadesV> matrizCidades;
 	private double temperaturaN;
+	private int pCounter;
+	private int nCounter;
+	private int gCounter;
+	private double alfa;
+	private int n_iter;
 	private Solution firstSolution;
 	private Solution currentSolution;
 	private Solution nextSolution;
 	private Solution bestSolution;
-	private int positivo;
-	private int negativo;
-	private double alfa;
-	private int n_iter;
 
 
 
@@ -89,6 +90,7 @@ public class SimulatedAnnealing {
 			}
 			n_iter = fatorial(bestSolution.getSolution().size())/2;
 			temperaturaN = decaimento(temperaturaN);
+			gCounter ++;
 			return algSimulatedAnnealing();
 			
 	}
@@ -129,10 +131,8 @@ public class SimulatedAnnealing {
 		while (p1 == p2 || Math.abs(p1 - p2) <= 1) {
 			p2 = randomG.nextInt(currentSolution.getSolution().size());
 		}
-	
 
-
-
+		
 		List<Integer> newSolution = new ArrayList<Integer>();
 		int counter = 0;
 		int v1 = 0; 
@@ -158,12 +158,12 @@ public class SimulatedAnnealing {
 		if (v2_2 >= currentSolution.getSolution().size()) {
 			v2_2 = 0;
 		}
-		List<Integer> aux = currentSolution.getSolution();
+		List<Integer> c = currentSolution.getSolution();
 
-		int costD = matrizDistancias[aux.get(v1)][aux.get(v2)] + matrizDistancias[aux.get(v1 + 1)][aux.get(v2_2)]
-				- matrizDistancias[aux.get(v1)][aux.get(v1 + 1)] - matrizDistancias[aux.get(v2)][aux.get(v2_2)];
+		int costD = matrizDistancias[c.get(v1)][c.get(v2)] + matrizDistancias[c.get(v1 + 1)][c.get(v2_2)]
+				- matrizDistancias[c.get(v1)][c.get(v1 + 1)] - matrizDistancias[c.get(v2)][c.get(v2_2)];
 
-		Solution vizinho = new Solution(newSolution, currentSolution.getCost() + costD, (positivo + negativo + 1), temperaturaN);
+		Solution vizinho = new Solution(newSolution, currentSolution.getCost() + costD, (pCounter + nCounter + 1), temperaturaN);
 		return vizinho;
 
 		
