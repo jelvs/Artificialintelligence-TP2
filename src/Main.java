@@ -22,15 +22,13 @@ public class Main {
 
 		int[][] matrizDistancias = new int[21][21];
 
-
 		setMatrizDistancias(nomeFicheiroD, matrizDistancias);
 		setMatrizCidades(nomeFicheiroC);
-
 		setFirstSolution();
+		simulated.algSimulatedAnnealing();
+		simulated.printResults();
 		
 		
-
-		//simulated.printCidades();
 
 		String[] cidadesVisitadas = {"A", "S", "D"};
 		int[] cidadesValues = new int[cidadesVisitadas.length];
@@ -78,8 +76,6 @@ public class Main {
 		String linha = null;
 		int nlinhas = 0;
 
-
-
 		if(ficheiroDistancias.exists()) {
 			try {
 				FileReader leFicheiro = new FileReader(nomeFicheiro);
@@ -113,15 +109,10 @@ public class Main {
 	}
 
 
-
-
-
 	private static void setMatrizCidades(String nomeFicheiro) {
 
 		File ficheiroDistancias = new File(nomeFicheiro);
-
-
-
+		
 		if(ficheiroDistancias.exists()) {
 			try {
 				FileReader leFicheiro = new FileReader(nomeFicheiro);
