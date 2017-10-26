@@ -8,6 +8,7 @@ import java.util.Random;
 
 public class SimulatedAnnealing {
 
+	private static final int MAX_ITER= 200;
 	private int[][] matrizDistancias;
 	private List<CidadesV> matrizCidades;
 	private double temperaturaN;
@@ -15,7 +16,6 @@ public class SimulatedAnnealing {
 	private double temperaturaBest;
 	private int pCounter;
 	private int nCounter;
-	private int gCounter;
 	private double alfa;
 	private int n_iter;
 	private long time;
@@ -31,7 +31,7 @@ public class SimulatedAnnealing {
 
 	public SimulatedAnnealing() {
 
-		matrizCidades = new ArrayList<CidadesV>(21);
+		matrizCidades = new ArrayList<CidadesV>(27);
 		alfa = 0.90;
 	}
 
@@ -65,6 +65,38 @@ public class SimulatedAnnealing {
 
 		//System.out.println(matrizCidades.get(first.get(0)).sort + " " + matrizCidades.get(first.get(1)).sort);
 
+		temperaturaInicial =  Math.sqrt(((matrizCidades.get(first.size()-1).getX() - matrizCidades.get(first.get(0)).getX()))^2 
+				+ ((matrizCidades.get(first.size()-1).getY() - matrizCidades.get(first.get(0)).getY()))^2);
+		
+
+		firstSolution = new Solution(first, cost , 0, temperaturaInicial);
+		System.out.println("first solution : " + firstSolution.getSolution());
+
+
+		currentSolution = firstSolution;
+		
+		bestSolution = currentSolution;
+		
+	
+		
+
+	}
+	
+	public void setFirstShuffleSolution(List<Integer> first) {
+		startTime = System.currentTimeMillis();	
+		Collections.shuffle(first);
+		int cost = 0;
+		for(int i = 0; i<first.size()-1; i++) {	
+
+			cost += matrizDistancias[first.get(i)][(first.get(i) + 1)];
+
+		}
+		cost+= matrizDistancias[first.size()-1][first.get(0)];
+
+		//Collections.sort(first , new DistComparator<Integer>(matrizCidades));
+
+		//System.out.println(matrizCidades.get(first.get(0)).sort + " " + matrizCidades.get(first.get(1)).sort);
+
 		temperaturaInicial =  Math.sqrt((matrizCidades.get(first.size()-1).getX() - matrizCidades.get(first.get(0)).getX())^2 
 				+ (matrizCidades.get(first.size()-1).getY() - matrizCidades.get(first.get(0)).getY())^2);
 		
@@ -82,7 +114,39 @@ public class SimulatedAnnealing {
 
 	}
 	
-	public Solution algSimulatedAnnealing() {
+	public void setFirstCompSolution(List<Integer> first) {
+		startTime = System.currentTimeMillis();	
+		//Collections.shuffle(first);
+		int cost = 0;
+		for(int i = 0; i<first.size()-1; i++) {	
+
+			cost += matrizDistancias[first.get(i)][(first.get(i) + 1)];
+
+		}
+		cost+= matrizDistancias[first.size()-1][first.get(0)];
+
+		Collections.sort(first , new DistComparator<Integer>(matrizCidades));
+
+		//System.out.println(matrizCidades.get(first.get(0)).sort + " " + matrizCidades.get(first.get(1)).sort);
+
+		temperaturaInicial =  Math.sqrt((matrizCidades.get(first.size()-1).getX() - matrizCidades.get(first.get(0)).getX())^2 
+				+ (matrizCidades.get(first.size()-1).getY() - matrizCidades.get(first.get(0)).getY())^2);
+		
+
+		firstSolution = new Solution(first, cost , 0, temperaturaInicial);
+		System.out.println("first solution : " + firstSolution.getSolution());
+
+
+		currentSolution = firstSolution;
+		
+		bestSolution = currentSolution;
+		
+	
+		
+
+	}
+	
+	public Solution algSimulatedAnnealing(int num) {
 		
 		n_iter = fatorial(bestSolution.getSolution().size())/2;
 
@@ -105,28 +169,46 @@ public class SimulatedAnnealing {
 				if(currentSolution.getCost() < bestSolution.getCost()) 
 					bestSolution = currentSolution;
 			}else {
-				if(Math.exp(-d/temperaturaN) > 0.9)
+				if(Math.exp(-d/temperaturaN) > alfa)
 					currentSolution = nextSolution;
 					pCounter++;
 					
 			}
 		}
 		
-			n_iter = fatorial(bestSolution.getSolution().size())/2;
+			//n_iter = fatorial(bestSolution.getSolution().size())/2;
 			
-		//	if(criterioParagem(n_iter)) {
-				
-			if(temperaturaN <= 0.5) {
-				temperaturaBest = temperaturaN;
-				time += System.currentTimeMillis() - startTime;
-				return bestSolution;
-			}
-	
+			
+					if(num == 1) {
+						if(n_iter/pCounter <= 0.2 ) {
+							temperaturaBest = temperaturaN;
+							time += System.currentTimeMillis() - startTime;
+							return bestSolution;
+						}
+							
+					}
+						
+					if(num == 2) { //TEMPERATURA
+						if(temperaturaN <= 0.5) {
+							temperaturaBest = temperaturaN;
+							time += System.currentTimeMillis() - startTime;
+							return bestSolution;
+						}
+					}
+					
+					if(num == 3) { //numero de iteracoes
+						if(n_iter >= MAX_ITER ) {
+							temperaturaBest = temperaturaN;
+							time += System.currentTimeMillis() - startTime;
+							return bestSolution;
+						}
+					}
+					
 			temperaturaN = decaimento(temperaturaN);
-			gCounter ++;
+			
 			nCounter++;
 			
-			return algSimulatedAnnealing();
+			return algSimulatedAnnealing(num);
 			
 	}
 			
@@ -138,8 +220,7 @@ public class SimulatedAnnealing {
 		return alfa * temperatura;
 	}
 
-	//se n_it dado for maior ou igual ao numero de iteraÃ§Ãµes inicial do problema entÃ£o podemos parar 
-	//ou entÃ£o, outra soluÃ§Ã£o, Ã© descer a temperatura atÃ© zero 
+
 	private boolean criterioParagem(int n_it ) {
 		if(n_it >= n_iter)
 			return true;
@@ -190,8 +271,9 @@ public class SimulatedAnnealing {
 
 
 	private Solution vizinho() {
-
 		Random randomG = new Random();
+		List<Integer> updateSolution = new ArrayList<Integer>();
+		int counter = 0;
 		int v1 = 0; 
 		int v2 = 0;
 		int p1 = randomG.nextInt(currentSolution.getSolution().size());
@@ -212,16 +294,16 @@ public class SimulatedAnnealing {
 		System.out.println("v2 : " + v2);
 
 		
-		List<Integer> newSolution = new ArrayList<Integer>();
-		int counter = 0;
+		
+		
 		
 		for (int s = 0; s < currentSolution.getSolution().size(); s++) {
 			
 			if (s <= v1 || s > v2) {
-				newSolution.add(s, currentSolution.getSolution().get(s));
+				updateSolution.add(s, currentSolution.getSolution().get(s));
 
 			} else {
-				newSolution.add(s, currentSolution.getSolution().get(v2 - counter));
+				updateSolution.add(s, currentSolution.getSolution().get(v2 - counter));
 
 				counter++;
 			}
@@ -230,13 +312,13 @@ public class SimulatedAnnealing {
 		if (v2_2 >= currentSolution.getSolution().size()) {
 			v2_2 = 0;
 		}
-		List<Integer> c = currentSolution.getSolution();
-		System.out.println("current : " + c);
+		List<Integer> cList = currentSolution.getSolution();
+		System.out.println("current : " + cList);
 
-		int costD = matrizDistancias[c.get(v1)][c.get(v2)] + matrizDistancias[c.get(v1 + 1)][c.get(v2_2)]
-				- matrizDistancias[c.get(v1)][c.get(v1 + 1)] - matrizDistancias[c.get(v2)][c.get(v2_2)];
+		int costD = matrizDistancias[cList.get(v1)][cList.get(v2)] + matrizDistancias[cList.get(v1 + 1)][cList.get(v2_2)]
+				- matrizDistancias[cList.get(v1)][cList.get(v1 + 1)] - matrizDistancias[cList.get(v2)][cList.get(v2_2)];
 
-		Solution vizinho = new Solution(newSolution, currentSolution.getCost() + costD, (pCounter + nCounter + 1), temperaturaN);
+		Solution vizinho = new Solution(updateSolution, currentSolution.getCost() + costD, (pCounter + nCounter + 1), temperaturaN);
 		return vizinho;
 
 		
@@ -244,17 +326,5 @@ public class SimulatedAnnealing {
 	}
 
 
-
-	/*
-	List<Integer> input;
-	public void printCidades() {
-		Collections.sort(firstSolution , new DistComparator<Integer>(matrizCidades));
-		for(int i = 0; i<21;i++) {
-
-			System.out.println("id: "+ i + " x: " + matrizCidades.get(i).getX() + " y: " + matrizCidades.get(i).getY());
-
-		}
-
-	}*/
 
 }
