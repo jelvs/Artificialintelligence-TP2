@@ -19,9 +19,8 @@ public class Main {
 
 		String nomeFicheiroD = "/Users/TiagoSousa/Documents/workspace/IA-TP2/src/Distancias.txt";
 		String nomeFicheiroC = "/Users/TiagoSousa/Documents/workspace/IA-TP2/src/cidades-xy.txt";
-
+		
 		int[][] matrizDistancias = new int[21][21];
-
 		setMatrizDistancias(nomeFicheiroD, matrizDistancias);
 		setMatrizCidades(nomeFicheiroC);
 		setFirstSolution();

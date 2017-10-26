@@ -118,13 +118,14 @@ public class SimulatedAnnealing {
 				
 			if(temperaturaN <= 0.5) {
 				temperaturaBest = temperaturaN;
+				time += System.currentTimeMillis() - startTime;
 				return bestSolution;
 			}
 	
 			temperaturaN = decaimento(temperaturaN);
 			gCounter ++;
 			nCounter++;
-			time += System.currentTimeMillis() - startTime;
+			
 			return algSimulatedAnnealing();
 			
 	}
